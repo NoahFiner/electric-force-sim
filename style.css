@@ -1,0 +1,15 @@
+* {
+  margin: 0;
+
+}
+
+#controls {
+  display: inline-block;
+  padding: 1em;
+  vertical-align: top;
+  /* font-family: helvetica, sans-serif; */
+}
+
+canvas {
+  display: inline-block;
+}
