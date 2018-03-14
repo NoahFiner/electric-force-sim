@@ -9,66 +9,70 @@
   <link href="style.css" rel="stylesheet" type="text/css"></link>
 </head>
 <body>
-  <canvas height="600" width="600" style="border: 1px solid #000" id="canvas-outer"></canvas>
-  <div id="controls">
-    <h4>Type of particle to place</h4>
-    <form>
+  <div id="everything-outer">
+    <canvas height="600" width="600" id="canvas-outer"></canvas>
+    <div id="controls">
+      <h3>Action</h3>
+      <form>
+        <input type="radio" id="place" name="mode" value="1" checked="checked">
+        <label>Place</label>
 
-      <input type="radio" id="positive" name="charges" value="1" checked="checked">
-      <label>Positive particles</label>
+        <input type="radio" id="erase" name="mode" value="-1">
+        <label>Erase</label>
+      </form>
 
-      <input type="radio" id="negative" name="charges" value="-1">
-      <label>Negative particles</label>
+      <br>
 
-      <input type="checkbox" name="fixed">
-      <label>Fixed particles?</label>
+      <form>
+        <h3>Particle to place</h3>
+        <input type="checkbox" name="fixed">
+        <label>Fixed particles?</label>
+        <br>
+        <input type="radio" id="positive" name="charges" value="1" checked="checked">
+        <label>Positive particles</label>
 
-    </form>
+        <input type="radio" id="negative" name="charges" value="-1">
+        <label>Negative particles</label>
 
-    <form>
-      <input type="checkbox" name="efield">
-      <label>Show electric field</label>
+      </form>
 
-      <input type="checkbox" name="lines" checked="checked">
-      <label>Show forces</label>
-      <!-- <input type="checkbox" name="gravity">
-      <label>Add gravity</label> -->
+      <br>
 
-      <input type="checkbox" name="forces">
-      <label>Disable electric forces</label>
-    </form>
+      <form>
+        <h3>Electric Field & Forces</h3>
+        <input type="checkbox" name="efield">
+        <label>Show electric field</label>
 
-    <form>
-      <div class="slidecontainer">
-        <h3>Electric force</h3>
-        <label>0%</label>
-        <input type="range" min="0" max="100" value="50" class="slider" id="myRange" name="eforce">
-        <label>100%</label>
-      </div>
-      <div class="slidecontainer">
-        <h3>Gravitational force</h3>
-        <label>0%</label>
-        <input type="range" min="0" max="100" value="0" class="slider" id="myRange" name="gforce">
-        <label>100%</label>
-      </div>
-      <div class="slidecontainer">
-        <h3>Frictional force</h3>
-        <label>0%</label>
-        <input type="range" min="0" max="100" value="0" class="slider" id="myRange" name="fforce">
-        <label>100%</label>
-      </div>
-    </form>
+        <input type="checkbox" name="lines" checked="checked">
+        <label>Show forces</label>
+      </form>
 
-    <form>
-      <input type="radio" id="place" name="mode" value="1" checked="checked">
-      <label>Place</label>
+      <br>
 
-      <input type="radio" id="erase" name="mode" value="-1">
-      <label>Erase</label>
-    </form>
-
-    <button onclick="restart()">Restart</button>
-    <button onclick="alternatePause()" id="pause">Pause</button>
+      <form>
+        <div class="slidecontainer">
+          <h3>Electric force</h3>
+          <label>0%</label>
+          <input type="range" min="0" max="100" value="50" class="slider" id="myRange" name="eforce">
+          <label>100%</label>
+        </div>
+        <div class="slidecontainer">
+          <h3>Gravitational force</h3>
+          <label>0%</label>
+          <input type="range" min="0" max="100" value="0" class="slider" id="myRange" name="gforce">
+          <label>100%</label>
+        </div>
+        <div class="slidecontainer">
+          <h3>Frictional force</h3>
+          <label>0%</label>
+          <input type="range" min="0" max="100" value="0" class="slider" id="myRange" name="fforce">
+          <label>100%</label>
+        </div>
+      </form>
+      <br>
+      <button onclick="restart()">Restart</button>
+      <button onclick="alternatePause()" id="pause">Pause</button>
+    </div>
   </div>
 </body>
 </html>

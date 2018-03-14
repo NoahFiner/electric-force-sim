@@ -56,14 +56,7 @@ var init = function() {
   sim = new Simulation();
   sim.start();
 
-  frameAmt = 0;
-
   addElectricFields();
-
-  for(var i = 0; i < 1; i++) {
-    // addParticle(Math.random()*cWidth, Math.random()*cHeight, 1, 0);
-    // addParticle(250, 250, 1, 1);
-  }
 
   window.requestAnimationFrame(update);
 
@@ -77,8 +70,6 @@ var restart = function() {
   if(paused) alternatePause();
   sim.start();
 }
-
-var frameAmt = 0;
 
 function Simulation() {
   this.particleAmt = 0;
@@ -121,6 +112,7 @@ function Particle(id, x, y, radius, charge, density, gravityEffect) {
         if(this.getDistanceFrom(this.coords, particles[i].coords) <= this.radius + particles[i].radius) {
           magnitude = (-kConstant*eForce)/Math.pow(this.radius + particles[i].radius, 2);
         }
+
         var theta = Math.atan((particles[i].coords[1] - this.coords[1])/(particles[i].coords[0] - this.coords[0])) //arctan(y/x) to get theta
 
         //correct arctan issues
@@ -129,6 +121,12 @@ function Particle(id, x, y, radius, charge, density, gravityEffect) {
         }
         else if(particles[i].coords[0] < this.coords[0]) {
           theta += Math.PI;
+        }
+
+        //in case the user places a charge directly on another charge
+        if(Math.abs(magnitude) > 10000 || isNaN(magnitude) || isNaN(theta)) {
+          magnitude = Math.random()*1000 + 100;
+          theta = Math.random()*Math.PI*2;
         }
 
         //continue correcting arctan issues
@@ -210,7 +208,9 @@ function Particle(id, x, y, radius, charge, density, gravityEffect) {
     for(var i = 0; i < this.acceleration.length; i++) {
       this.velocity[i] += this.acceleration[i];
     }
-    this.updateFromVelocity();
+    if(!paused) {
+      this.updateFromVelocity();
+    }
   }
 
   //rotates the velocity rads radians counterclockwise
@@ -234,7 +234,6 @@ function Particle(id, x, y, radius, charge, density, gravityEffect) {
         if(theta > Math.PI/2) {
           theta -= Math.PI/2;
         }
-        console.log(theta);
         // console.log(Math.acos(this.cosAngleBetween(walls[i].slope, [walls[i].centerCoords[0] - this.coords[0], walls[i].centerCoords[1] - this.coords[1]])));
         this.rotateVelocity(2*theta);
       }
@@ -242,12 +241,13 @@ function Particle(id, x, y, radius, charge, density, gravityEffect) {
 
     if(bounceOffSides) {
       for(var k = 0; k < 2; k++) {
-        if(this.coords[k] + this.velocity[k] <= 0) {
-          this.coords[k] = this.coords[k]*-1; //put the particle on the opposite side of the wall in case it will hit it and go too far into it
+        if(this.coords[k] + this.velocity[k] <= 0 + this.radius) {
+          //TODO: FIX THIS
+          // this.coords[k] = this.coords[k]*-1 + this.radius; //put the particle on the opposite side of the wall in case it will hit it and go too far into it
           this.velocity[k] *= -0.95;
         }
-        if(this.coords[k] + this.velocity[k] >= cDimensions[k]) {
-          this.coords[k] = 600 + (600 + this.coords[k]*-1); //put the particle on the opposite side of the wall in case it will hit it and go too far into it
+        if(this.coords[k] + this.velocity[k] >= cDimensions[k] - this.radius) {
+          // this.coords[k] = 600 - this.radius + (600 + this.coords[k]*-1); //put the particle on the opposite side of the wall in case it will hit it and go too far into it
           this.velocity[k] *= -0.95;
         }
       }
@@ -387,25 +387,22 @@ var update = function() {
   var canvas = document.getElementById("canvas-outer");
   var ctx = canvas.getContext("2d");
 
-  if(!paused) {
-    frameAmt++;
+  ctx.clearRect(0, 0, cWidth, cHeight);
 
-    ctx.clearRect(0, 0, cWidth, cHeight);
-
-    for(var i = 0; i < eFields.length; i++) {
-      eFields[i].draw();
-    }
-
-    for(var i = 0; i < walls.length; i++) {
-      walls[i].draw();
-    }
-
-    for(var i = 0; i < particles.length; i++) {
-      particles[i].updateFromForce();
-      particles[i].draw();
-    }
+  for(var i = 0; i < eFields.length; i++) {
+    eFields[i].draw();
   }
 
+  for(var i = 0; i < walls.length; i++) {
+    walls[i].draw();
+  }
+
+  for(var i = 0; i < particles.length; i++) {
+    particles[i].updateFromForce();
+    particles[i].draw();
+  }
+
+  ctx.globalAlpha = 0.1;
   if(clickMode === "place") {
     if(clickCharge === "-1" || clickCharge === -1) {
       ctx.fillStyle = "#ff0000";
@@ -414,7 +411,6 @@ var update = function() {
     }
     ctx.beginPath();
     ctx.arc(mouseCoords[0], mouseCoords[1], 10, 0, 2*Math.PI, false);
-    ctx.globalAlpha = 0.1;
     if(fixedParticles) {
       ctx.lineWidth = "3";
       ctx.strokeStyle = "#000000";
@@ -422,8 +418,17 @@ var update = function() {
     }
     ctx.fill();
     ctx.closePath();
-    ctx.globalAlpha = 1;
+  } else if(clickMode === "erase") {
+    ctx.beginPath();
+    ctx.moveTo(mouseCoords[0] - 10, mouseCoords[1] - 10);
+    ctx.lineTo(mouseCoords[0] + 10, mouseCoords[1] + 10);
+    ctx.moveTo(mouseCoords[0] + 10, mouseCoords[1] - 10);
+    ctx.lineTo(mouseCoords[0] - 10, mouseCoords[1] + 10);
+    ctx.lineWidth = "4";
+    ctx.strokeStyle = "#aa0000";
+    ctx.stroke();
   }
+  ctx.globalAlpha = 1;
 
   window.requestAnimationFrame(update);
 }
@@ -431,10 +436,10 @@ var update = function() {
 var alternatePause = function() {
   if(!paused) {
     paused = true;
-    $("#paused").html("Play");
+    $("#pause").html("Play");
   } else {
     paused = false;
-    $("#paused").html("Pause");
+    $("#pause").html("Pause");
   }
 }
 
@@ -501,9 +506,6 @@ $(document).ready(function() {
   });
   $("input[name=efield]").change(function() {
     eFieldShown = $(this).is(":checked");
-  });
-  $("input[name=forces]").change(function() {
-    forcesEnabled = !($(this).is(":checked"));
   });
   $("input[name=lines]").change(function() {
     forcesShown = ($(this).is(":checked"));
