@@ -2,18 +2,19 @@ var sim, ctx, canvas, cHeight, cWidth;
 var particles = [];
 var eFields = [];
 var walls = [];
+
 var eFieldDivision = 10;
-var mu = 0.03;
-var fixedParticles = false;
 var bounceOffSides = true;
+
+
+var mu = 0.03;
 var gravity = 200;
 var kConstant = 1000000;
 var clickCharge = 1;
+var fixedParticles = false;
 var eFieldShown = false;
 var forcesEnabled = true;
 var forcesShown = true;
-
-var mouseCoords = [0, 0];
 
 var clickMode = "place";
 
@@ -21,9 +22,9 @@ var gForce = 0;
 var eForce = 0.5;
 var fForce = 0;
 
-var cWidth, cHeight;
-
 var paused = false;
+
+var mouseCoords = [0, 0];
 
 //By Titus Cieslewski on Stackoverflow.com
 //Size should be between 0 and 1
@@ -184,13 +185,6 @@ function Particle(id, x, y, radius, charge, density, gravityEffect) {
         arrowYForce = 100*Math.sin(theta);
       }
       canvas_arrow(ctx, this.coords[0], this.coords[1], arrowXForce + this.coords[0], arrowYForce + this.coords[1], size, color);
-
-      // ctx.beginPath();
-      // ctx.moveTo(this.coords[0], this.coords[1]);
-      // ctx.lineTo(this.coords[0] + this.force[0], this.coords[1] + this.force[1]);
-      // ctx.strokeColor = "#00ff00";
-      // ctx.stroke();
-      // ctx.closePath();
     }
   }
 
@@ -406,7 +400,7 @@ var update = function() {
   if(clickMode === "place") {
     if(clickCharge === "-1" || clickCharge === -1) {
       ctx.fillStyle = "#ff0000";
-    } else if(clickCharge === 1) {
+    } else if(clickCharge === 1 || clickCharge === "1") {
       ctx.fillStyle = "#0000ff";
     }
     ctx.beginPath();
