@@ -75,7 +75,7 @@ var restart = function() {
 function Simulation() {
   this.particleAmt = 0;
   this.start = function() {
-    ctx.clearRect(0, 0, cHeight, cWidth);
+  ctx.clearRect(0, 0, cHeight, cWidth);
   }
 }
 
