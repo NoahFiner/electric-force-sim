@@ -12,7 +12,7 @@ var gravity = 200;
 var kConstant = 1000000;
 var clickCharge = 1;
 var fixedParticles = false;
-var eFieldShown = false;
+var eFieldShown = true;
 var forcesEnabled = true;
 var forcesShown = true;
 
@@ -163,7 +163,7 @@ function Particle(id, x, y, radius, charge, density, gravityEffect) {
       var mag = Math.sqrt(Math.pow(this.force[0], 2) + Math.pow(this.force[1] - gravity*this.gravityEffect*gForce, 2));
       var color = "#000000";
       if(this.type === "field") {
-        color = "#aaaaaa";
+        color = "#cccccc";
       }
       var size = -Math.pow(Math.E, -0.002*Math.pow(mag, 2)) + 1
       var arrowXForce = this.force[0];
